@@ -1,0 +1,6 @@
+node_modules
+.env
+.idea
+bwd
+config.prod.js
+config.js
