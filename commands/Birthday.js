@@ -31,6 +31,6 @@ module.exports = class extends Command {
       });
       await user.save();
     }
-    return message.reply('Ok');
+    return message.reply(`Ustawiono datę urodzin na ${birthdayDate}`);
   }
 };

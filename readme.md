@@ -5,3 +5,6 @@
 - MONGO_URL
 - WEATHER
 - MAPBOX
+
+
+Domyślny prefix: `r:`

@@ -5,4 +5,5 @@ module.exports = {
   birthdayRole: '', // role id
   birthdayGuild: '', // guild id
   birthdayChannel: '', // channel id
+  prefix: '', // command prefix
 };
