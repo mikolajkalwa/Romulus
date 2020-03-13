@@ -1,16 +1,16 @@
 const { Task } = require('klasa');
 const User = require('../models/User');
 const logger = require('../util/logger');
-const { birthdayGuild, birthdayRole, birthdayChannel } = require('../config');
+const { mainGuildId, birthdayRoleId, birthdayChannelId } = require('../config');
 
 module.exports = class RoleUpdater extends Task {
   async run() {
     const removeRoles = [];
-    const guild = this.client.guilds.get(birthdayGuild);
+    const guild = this.client.guilds.get(mainGuildId);
     const members = await guild.members.fetch();
     members.forEach((member) => {
-      if (member.roles.has(birthdayRole)) {
-        removeRoles.push(member.roles.remove(birthdayRole));
+      if (member.roles.has(birthdayRoleId)) {
+        removeRoles.push(member.roles.remove(birthdayRoleId));
       }
     });
     await Promise.all(removeRoles);
@@ -25,10 +25,10 @@ module.exports = class RoleUpdater extends Task {
     if (birthdayMembers.size > 0) {
       const addRoles = [];
       birthdayMembers.forEach((member) => {
-        addRoles.push(member.roles.add(birthdayRole));
+        addRoles.push(member.roles.add(birthdayRoleId));
       });
       await Promise.all(addRoles);
-      const channel = await this.client.channels.fetch(birthdayChannel);
+      const channel = await this.client.channels.fetch(birthdayChannelId);
       const mentions = birthdayMembers.map((member) => `<@${member.id}>`);
       await channel.send(`:partying_face:  Wszystkiego najelpszego z okazji urodzin! ${mentions.join(' ')}`);
     }
