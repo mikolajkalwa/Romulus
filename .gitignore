@@ -4,3 +4,4 @@ node_modules
 bwd
 config.prod.js
 config.js
+built
