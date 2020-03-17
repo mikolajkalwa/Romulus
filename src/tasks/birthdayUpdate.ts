@@ -1,7 +1,6 @@
 import { Task } from 'klasa';
 import { GuildMember, TextChannel } from 'discord.js';
 import User from '../models/User';
-import logger from '../util/logger';
 import config from '../config';
 
 const { mainGuildId, birthdayRoleId, birthdayChannelId } = config;
@@ -35,10 +34,9 @@ export default class RoleUpdater extends Task {
       await channel.send(`:partying_face:  Wszystkiego najelpszego z okazji urodzin! ${mentions.join(' ')}`);
     }
 
-    logger.info(
+    this.client.emit('log',
       `Birthday roles update!
       Removed ${removeRoles.length}
-      Added ${birthdayMembers.size}`,
-    );
+      Added ${birthdayMembers.size}`);
   }
 }

@@ -1,13 +1,11 @@
 import './util/env';
+import bot from './bot';
 import './db';
 import config from './config';
-import logger from './util/logger';
-import bot from './bot';
 
 
 process.on('uncaughtException', (error) => {
-  logger.fatal(error.message);
-  logger.fatal(error.stack!);
+  bot.emit('error', error.stack);
   process.exit(1);
 });
 

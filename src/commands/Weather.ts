@@ -5,7 +5,6 @@ import { MessageEmbed } from 'discord.js';
 import { darksky, mapbox } from '../util/request';
 import { conditions } from '../util/iconsMap';
 import { getWeekday } from '../util/weekday';
-import logger from '../util/logger';
 import PlaceNotFound from '../exception/PlaceNotFound';
 import { ILocation } from '../interfaces/ILocation';
 import { IWeather } from '../interfaces/IWeather';
@@ -101,7 +100,7 @@ export default class WeatherCommand extends Command {
       if (err instanceof PlaceNotFound) {
         return message.reply('Nie udało mi się znaleźć takiego miejsca na mapie.');
       }
-      logger.error(err);
+      this.client.emit('error', err.stack);
       return message.reply('Coś poszło nie tak!');
     }
   }

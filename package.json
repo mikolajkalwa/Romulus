@@ -12,12 +12,10 @@
     "discord.js": "https://github.com/discordjs/discord.js#fe7df708e44e0280dfaf0f8e457b154781bb5140",
     "dotenv": "^8.2.0",
     "klasa": "https://github.com/dirigeants/klasa#4fa20eb767a216ef2e938f1f8d65b33c88d2c913",
-    "mongoose": "^5.8.11",
-    "pino": "^5.15.0"
+    "mongoose": "^5.8.11"
   },
   "devDependencies": {
     "@types/mongoose": "^5.7.6",
-    "@types/pino": "^5.17.0",
     "@typescript-eslint/eslint-plugin": "2.19.0",
     "@typescript-eslint/parser": "^2.23.0",
     "eslint": "^6.8.0",
