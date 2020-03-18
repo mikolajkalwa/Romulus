@@ -47,7 +47,7 @@ module.exports = class extends Language {
       RESOLVER_MINMAX_MAX: (name, max, suffix) => `${name} musi być krótsze niż ${max}${suffix}.`,
       REACTIONHANDLER_PROMPT: 'Na którą stronę przejść?',
       COMMANDMESSAGE_MISSING: 'Nie podano wszystkich wymaganych parametrów.',
-      COMMANDMESSAGE_MISSING_REQUIRED: (name) => `${name} jest wyamaganym parametrem.`,
+      COMMANDMESSAGE_MISSING_REQUIRED: (name) => `${name} jest wymaganym parametrem.`,
       COMMANDMESSAGE_MISSING_OPTIONALS: (possibles) => `Missing a required option: (${possibles})`,
       COMMANDMESSAGE_NOMATCH: (possibles) => `Your option didn't match any of the possibilities: (${possibles})`,
       // eslint-disable-next-line max-len
