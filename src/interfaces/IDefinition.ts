@@ -3,4 +3,5 @@ export interface IDefinition {
   query: string;
   definition: string;
   example: string;
+  date: string;
 }

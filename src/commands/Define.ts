@@ -13,8 +13,6 @@ export default class DefineCommand extends Command {
       enabled: true,
       usage: '<query:string>',
       runIn: ['text'],
-      cooldown: 3600,
-      bucket: 3,
       description: 'Wyszukuje definicji podanego słowa w serwisie miejski.pl',
     });
   }
@@ -22,11 +20,12 @@ export default class DefineCommand extends Command {
   private static prepareMessage(defintion: IDefinition) {
     const messageEmbed = new MessageEmbed();
     messageEmbed.setURL(defintion.url);
-    messageEmbed.setTitle(`Definicja wyazu ${defintion.query}`);
+    messageEmbed.setTitle(`Definicja wyrazu ${defintion.query}`);
     messageEmbed.addField('Definicja', defintion.definition);
     if (defintion.example.length) {
       messageEmbed.addField('Przykład', defintion.example);
     }
+    messageEmbed.setFooter(defintion.date);
     return messageEmbed;
   }
 
@@ -40,10 +39,16 @@ export default class DefineCommand extends Command {
     } else if (response.status === 200) {
       const $ = cheerio.load(response.data);
       const definitionNode = $('li', '#words').first();
+      const isPending = !!$('.pending', definitionNode).length;
+      if (isPending) {
+        message.reply('Definicja znajduje się aktualnie w poczekalni.');
+        return null;
+      }
       const definition = $('.definition', definitionNode).text().trim();
       const example = $('.example', definitionNode).text().trim();
+      const date = $('.info:contains("Data dodania:")', definitionNode).text().trim();
       const definitionMessage = DefineCommand.prepareMessage({
-        url, query, definition, example,
+        url, query, definition, example, date,
       });
       message.reply(definitionMessage);
     } else {
