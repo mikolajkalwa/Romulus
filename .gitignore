@@ -2,6 +2,6 @@ node_modules
 .env
 .idea
 bwd
-config.prod.js
-config.js
+config.prod.ts
+config.ts
 built
