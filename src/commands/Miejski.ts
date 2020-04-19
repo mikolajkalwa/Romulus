@@ -9,7 +9,7 @@ import { IDefinition } from '../interfaces/IDefinition';
 export default class DefineCommand extends Command {
   constructor(client: KlasaClient, store: CommandStore, file: string[], dir: string) {
     super(client, store, file, dir, {
-      name: 'definiuj',
+      name: 'miejski',
       enabled: true,
       usage: '<query:string>',
       runIn: ['text'],
@@ -38,15 +38,10 @@ export default class DefineCommand extends Command {
       message.reply('Nie udało się odnaleźć definicji dla podanego wyrazu!');
     } else if (response.status === 200) {
       const $ = cheerio.load(response.data);
-      const definitionNode = $('li', '#words').first();
-      const isPending = !!$('.pending', definitionNode).length;
-      if (isPending) {
-        message.reply('Definicja znajduje się aktualnie w poczekalni.');
-        return null;
-      }
-      const definition = $('.definition', definitionNode).text().trim();
-      const example = $('.example', definitionNode).text().trim();
-      const date = $('.info:contains("Data dodania:")', definitionNode).text().trim();
+      const definitionNode = $('article').first();
+      const definition = $('p', definitionNode).text().trim();
+      const example = $('blockquote', definitionNode).text().trim();
+      const date = $('.published-date', $('footer', definitionNode)).text().trim();
       const definitionMessage = DefineCommand.prepareMessage({
         url, query, definition, example, date,
       });
