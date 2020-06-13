@@ -1,0 +1,14 @@
+
+syntax = "proto3";
+
+message Empty {
+}
+
+message ActionResponse {
+  bool isSuccess = 1;
+}
+
+service Romulus {
+  rpc BirthdayRoleUpdate (Empty) returns (ActionResponse) {}
+  rpc ServerStatisticsUpdate (Empty) returns (ActionResponse) {}
+}
