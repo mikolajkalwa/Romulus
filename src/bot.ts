@@ -4,10 +4,7 @@ import config from './config';
 const clientOptions: ClientOptions = {
   disableEvents: {
     TYPING_START: true
-  },
-  intents: [
-    'guildMembers'
-  ]
+  }
 };
 
 const commandOptions: CommandClientOptions = {

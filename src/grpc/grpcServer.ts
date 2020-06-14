@@ -57,13 +57,14 @@ const birthdayRoleUpdate = async (call, callback) => {
 
 // @ts-ignore
 const serverStatisticsUpdate = async (call, callback) => {
+  // TODO to by trzeba bylo czytac z jakiegoś pliku i do niego zapisywac. W bocie na eventach kiedy ktoś się robi online a kiedy offline itp
   logger.debug('serverStatisticsUpdate');
   const rulalosGuild = bot.guilds.find(guild => guild.id === config.RULALOS_GUILD_ID);
   const onlineUsersCount = rulalosGuild?.members.filter(member => member.status !== 'offline').length;
   try {
     await Promise.all([
-      (bot.getChannel(config.TOTAL_USERS_CHANNEL) as VoiceChannel).edit({ name: `Fanów ${rulalosGuild?.memberCount}` }),
-      (bot.getChannel(config.ONLINE_USERS_CHANNEL) as VoiceChannel).edit({ name: `Online ${onlineUsersCount}` })
+      (bot.getChannel(config.TOTAL_USERS_CHANNEL) as VoiceChannel).edit({ name: `» Fanów: ${rulalosGuild?.memberCount}` }),
+      (bot.getChannel(config.ONLINE_USERS_CHANNEL) as VoiceChannel).edit({ name: `» Online: ${onlineUsersCount}` })
     ]);
     callback(null, { isSuccess: true });
   } catch (error) {

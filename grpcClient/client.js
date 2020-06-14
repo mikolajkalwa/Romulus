@@ -19,9 +19,9 @@ if (action === 'birthday' || action === 'statistics') {
   if (action === 'birthday') {
     client.birthdayRoleUpdate({}, (err, response) => {
       if (err) {
-        console.error('Coś się zjebało po stronie grpc', err);
+        console.error('Błąd po stronie gRPC', err);
       } else {
-        console.log('Status operacji akutlaizacji urodzinek', response.isSuccess);
+        console.log('Czy zaktulizowano role urodzinowe z sukcsesem: ', response.isSuccess);
       }
     });
   }
@@ -29,9 +29,9 @@ if (action === 'birthday' || action === 'statistics') {
   if (action === 'statistics') {
     client.serverStatisticsUpdate({}, (err, response) => {
       if (err) {
-        console.error('Coś się zjebało po stronie grpc', err);
+        console.error('Błąd po stronie gRPC', err);
       } else {
-        console.log('Status operacji akutlaizacji urodzinek', response.isSuccess);
+        console.log('Czy zakończono aktualizacje statystyk z sukcesem:', response.isSuccess);
       }
     });
   }

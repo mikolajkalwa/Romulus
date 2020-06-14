@@ -22,7 +22,8 @@ if (process.env.NODE_ENV !== 'production') {
     format: format.combine(
       format.colorize({ all: true }),
       format.simple()
-    )
+    ),
+    level: 'debug'
   }));
 }
 
