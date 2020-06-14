@@ -1,5 +1,4 @@
 export default {
-  // TODO: dodac adres do mongodb do zmiennnych srodowiskowtych
   BOT_TOKEN: process.env.BOT_TOKEN ?? '',
   MONGO_URL: process.env.MONGO_URL ?? '',
   WEATHER: process.env.DARKSKY ?? '',

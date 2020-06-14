@@ -3,6 +3,8 @@ import bot from './bot';
 import logger from './logger';
 import path from 'path';
 import fs from 'fs';
+import './db';
+import './grpc/grpcServer';
 
 process.on('unhandledRejection', (reason) => {
   throw reason;
