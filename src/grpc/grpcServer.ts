@@ -4,7 +4,7 @@ import * as protoLoader from '@grpc/proto-loader';
 import logger from '../logger';
 import bot from '../bot';
 import config from '../config';
-import { VoiceChannel, TextChannel } from 'eris';
+import { TextChannel } from 'eris';
 import User from '../models/User';
 
 const protoPath = path.resolve(__dirname, '..', '..', 'rpc.proto');
@@ -55,28 +55,10 @@ const birthdayRoleUpdate = async (call, callback) => {
   }
 };
 
-// @ts-ignore
-const serverStatisticsUpdate = async (call, callback) => {
-  // TODO to by trzeba bylo czytac z jakiegoś pliku i do niego zapisywac. W bocie na eventach kiedy ktoś się robi online a kiedy offline itp
-  logger.debug('serverStatisticsUpdate');
-  const rulalosGuild = bot.guilds.find(guild => guild.id === config.RULALOS_GUILD_ID);
-  const onlineUsersCount = rulalosGuild?.members.filter(member => member.status !== 'offline').length;
-  try {
-    await Promise.all([
-      (bot.getChannel(config.TOTAL_USERS_CHANNEL) as VoiceChannel).edit({ name: `» Fanów: ${rulalosGuild?.memberCount}` }),
-      (bot.getChannel(config.ONLINE_USERS_CHANNEL) as VoiceChannel).edit({ name: `» Online: ${onlineUsersCount}` })
-    ]);
-    callback(null, { isSuccess: true });
-  } catch (error) {
-    logger.error(`Coś się wyhuśtało przy aktualizacji kanałow ze statystkami ${error}`);
-    callback(null, { isSuccess: false });
-  }
-};
-
 const server = new grpc.Server();
 
 // @ts-ignore
-server.addService(protoDescriptor.Romulus.service, { birthdayRoleUpdate, serverStatisticsUpdate });
+server.addService(protoDescriptor.Romulus.service, { birthdayRoleUpdate });
 server.bindAsync(config.GRPC, grpc.ServerCredentials.createInsecure(), (err) => {
   if (err) { throw err; }
   logger.info('Starting gRPC server!');
