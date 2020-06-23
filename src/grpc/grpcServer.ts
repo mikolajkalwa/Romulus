@@ -22,7 +22,7 @@ const birthdayRoleUpdate = async (call, callback) => {
     // eslint-disable-next-line no-unused-expressions
     rulalosGuild?.members.forEach(member => {
       if (member.roles.includes(config.BIRTHDAY_ROLE_ID)) {
-        removingBirthdayRole.push(member.removeRole(config.BIRTHDAY_ROLE_ID, 'Urodziny się skończyły'));
+        removingBirthdayRole.push(member.removeRole(config.BIRTHDAY_ROLE_ID));
       }
     });
     await Promise.all(removingBirthdayRole);
@@ -42,11 +42,11 @@ const birthdayRoleUpdate = async (call, callback) => {
 
       await Promise.all(rolesUpdate);
       const birthdayChannel = bot.getChannel(config.HAPPY_BIRTHDAY_CHANNEL) as TextChannel;
-      await birthdayChannel.editPermission(config.RULALOS_GUILD_ID, 2048, 0, 'role', 'Pozwól składać życzenia urodzinowe');
+      await birthdayChannel.editPermission(config.RULALOS_GUILD_ID, 2048, 0, 'role');
       const mentions = birthdayUsersIDs.map(id => `<@${id}>`);
       await birthdayChannel.createMessage(`:partying_face:  Wszystkiego najlepszego z okazji urodzin! ${mentions.join(' ')}`);
     } else {
-      await (bot.getChannel(config.HAPPY_BIRTHDAY_CHANNEL) as TextChannel).editPermission(config.RULALOS_GUILD_ID, 0, 2048, 'role', 'Nikt nie ma urodzin');
+      await (bot.getChannel(config.HAPPY_BIRTHDAY_CHANNEL) as TextChannel).editPermission(config.RULALOS_GUILD_ID, 0, 2048, 'role');
     }
     callback(null, { isSuccess: true });
   } catch (error) {

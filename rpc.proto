@@ -10,5 +10,4 @@ message ActionResponse {
 
 service Romulus {
   rpc BirthdayRoleUpdate (Empty) returns (ActionResponse) {}
-  rpc ServerStatisticsUpdate (Empty) returns (ActionResponse) {}
 }
