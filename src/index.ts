@@ -1,10 +1,11 @@
 import './env';
+import fs from 'fs';
+import path from 'path';
+import { CronJob } from 'cron';
 import bot from './bot';
 import logger from './logger';
-import path from 'path';
-import fs from 'fs';
 import './db';
-import './grpc/grpcServer';
+import updateBirthday from './miscellaneous/updateBirthday';
 
 process.on('unhandledRejection', (reason) => {
   throw reason;
@@ -48,4 +49,5 @@ const loadCommands = async () => {
   await Promise.all([loadEvents(), loadCommands()]);
   logger.info('Finished loading commands and events!');
   await bot.connect();
+  const job = new CronJob('0 8 * * *', updateBirthday, null, true, 'Europe/Warsaw');
 })();

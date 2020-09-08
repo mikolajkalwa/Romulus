@@ -1,18 +1,10 @@
-import path from 'path';
-import * as grpc from '@grpc/grpc-js';
-import * as protoLoader from '@grpc/proto-loader';
 import logger from '../logger';
 import bot from '../bot';
 import config from '../config';
 import { TextChannel } from 'eris';
 import User from '../models/User';
 
-const protoPath = path.resolve(__dirname, '..', '..', 'rpc.proto');
-const packageDefinition = protoLoader.loadSync(protoPath);
-const protoDescriptor = grpc.loadPackageDefinition(packageDefinition);
-
-// @ts-ignore
-const birthdayRoleUpdate = async (call, callback) => {
+const birthdayRoleUpdate = async () => {
   try {
     logger.debug('birthdayRoleUpdate');
     const rulalosGuild = bot.guilds.find(guild => guild.id === config.RULALOS_GUILD_ID);
@@ -48,19 +40,9 @@ const birthdayRoleUpdate = async (call, callback) => {
     } else {
       await (bot.getChannel(config.HAPPY_BIRTHDAY_CHANNEL) as TextChannel).editPermission(config.RULALOS_GUILD_ID, 0, 2048, 'role');
     }
-    callback(null, { isSuccess: true });
   } catch (error) {
     logger.error(`Coś się wyhuśtało przy aktualizacji urodzin ${error}`);
-    callback(null, { isSuccess: false });
   }
 };
 
-const server = new grpc.Server();
-
-// @ts-ignore
-server.addService(protoDescriptor.Romulus.service, { birthdayRoleUpdate });
-server.bindAsync(config.GRPC, grpc.ServerCredentials.createInsecure(), (err) => {
-  if (err) { throw err; }
-  logger.info('Starting gRPC server!');
-  server.start();
-});
+export default birthdayRoleUpdate;
