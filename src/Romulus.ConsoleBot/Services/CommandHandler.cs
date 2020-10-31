@@ -20,13 +20,7 @@ namespace Romulus.ConsoleBot.Services
             _client = client;
             _services = services;
             _config = config;
-        }
 
-        public async Task InitializeAsync()
-        {
-            await _commands.AddModulesAsync(
-                assembly: Assembly.GetEntryAssembly(),
-                services: _services);
             _client.MessageReceived += HandleCommandAsync;
         }
 
