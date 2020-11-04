@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System;
+using AutoMapper;
 using Romulus.ConsoleBot.APIClients;
 using Romulus.ConsoleBot.Models;
 using System.Threading.Tasks;
@@ -19,6 +20,10 @@ namespace Romulus.ConsoleBot.Services
         public async Task<Location> GetLocationData(string location)
         {
             var response = await _client.GetLocationData(location);
+            if (response.Features.Count == 0)
+            {
+                throw new ArgumentException("Nie znaleziono takiego miejsca!", location);
+            }
             var locationData = _mapper.Map<Location>(response);
             return locationData;
         }
