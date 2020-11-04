@@ -77,36 +77,6 @@ namespace Romulus.ConsoleBot
                   })
                     );
 
-            //CreateMap<DailyForecast, DailyWeather>()
-            //    .ForMember(
-            //        dest => dest.Icon,
-            //        opt => opt.MapFrom((src, dest) =>
-            //        {
-            //            var icon = src.WeatherForecast.First().Icon;
-            //            icon = icon.Remove(icon.Length - 1);
-            //            if (Icons.TryGetValue(icon, out string emojiValue))
-            //            {
-            //                return emojiValue;
-            //            }
-
-            //            return string.Empty;
-
-            //        })
-            //    )
-            //    .ForMember(
-            //        dest => dest.Weekday,
-            //        opt => opt.MapFrom((src, dest) =>
-            //        {
-            //            var date = DateTimeOffset.FromUnixTimeSeconds(src.DayTime);
-            //            return date.ToString("dddd", new CultureInfo("PL"));
-
-            //        })
-            //    )
-            //    .ForMember(
-            //    dest => dest.Summary,
-            //    opt => opt.MapFrom(src => src.WeatherForecast.First().Description)
-            //);
-
             CreateMap<MapboxResponse, Location>()
                 .ForMember(
                     dest => dest.Longitude,
