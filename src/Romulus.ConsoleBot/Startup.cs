@@ -1,4 +1,6 @@
-﻿using Discord;
+﻿using System.Globalization;
+using AutoMapper;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
@@ -7,6 +9,7 @@ using Romulus.ConsoleBot.Services;
 using Serilog;
 using System.IO;
 using System.Threading.Tasks;
+using Romulus.ConsoleBot.APIClients;
 
 namespace Romulus.ConsoleBot
 {
@@ -16,6 +19,9 @@ namespace Romulus.ConsoleBot
 
         public Startup(string[] args)
         {
+            var cultureInfo = new CultureInfo("en-US");
+            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
+            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
             var builder = new ConfigurationBuilder()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -44,21 +50,28 @@ namespace Romulus.ConsoleBot
 
         private void ConfigureServices(IServiceCollection services)
         {
-            services.AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
-            {
-                LogLevel = LogSeverity.Verbose,
-                MessageCacheSize = 1000
-            }))
-            .AddSingleton(new CommandService(new CommandServiceConfig
-            {
-                LogLevel = LogSeverity.Verbose,
-                DefaultRunMode = RunMode.Async,
-            }))
-            .AddSingleton<CommandHandler>()
-            .AddSingleton<StartupService>()
-            .AddSingleton<LoggingService>()
-            .AddSingleton(Configuration)
-            .AddLogging(configure => configure.AddSerilog());
+            services
+                .AddLogging(configure => configure.AddSerilog())
+                .AddAutoMapper(c => c.AddProfile<AutoMapping>(), typeof(Profile))
+                .AddSingleton(Configuration)
+                .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
+                {
+                    LogLevel = LogSeverity.Verbose,
+                    MessageCacheSize = 1000
+                }))
+                .AddSingleton(new CommandService(new CommandServiceConfig
+                {
+                    LogLevel = LogSeverity.Verbose,
+                    DefaultRunMode = RunMode.Async,
+                }))
+                .AddSingleton<CommandHandler>()
+                .AddSingleton<StartupService>()
+                .AddSingleton<LoggingService>()
+                .AddScoped<IOpenWeatherMapClient, OpenWeatherMapClient>()
+                .AddScoped<IMapboxClient, MapboxClient>()
+                .AddScoped<IMapboxService, MapboxService>()
+                .AddScoped<IWeatherService, WeatherService>();
+
         }
     }
 }
