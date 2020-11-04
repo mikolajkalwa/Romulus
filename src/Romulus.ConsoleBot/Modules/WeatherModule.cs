@@ -1,9 +1,10 @@
-﻿using Discord;
+﻿using System;
+using Discord;
 using Discord.Commands;
 using Romulus.ConsoleBot.Services;
-using System;
 using System.IO;
 using System.Threading.Tasks;
+using Discord.Addons.Preconditions;
 
 namespace Romulus.ConsoleBot.Modules
 {
@@ -18,7 +19,7 @@ namespace Romulus.ConsoleBot.Modules
             _weather = weather;
         }
 
-        [Command("pogoda")]
+        [Command("pogoda"), Ratelimit(5, 30, Measure.Minutes)]
         public async Task GetWeather([Remainder] string location)
         {
             try
