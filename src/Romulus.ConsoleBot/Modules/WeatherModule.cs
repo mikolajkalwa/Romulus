@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Romulus.ConsoleBot.Services;
+using System;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -20,21 +21,27 @@ namespace Romulus.ConsoleBot.Modules
         [Command("pogoda")]
         public async Task GetWeather([Remainder] string location)
         {
-
-            var locationData = await _mapbox.GetLocationData(location);
-            var report = await _weather.GenerateWeatherReport(locationData.Latitude, locationData.Longitude);
-
-            var image = await _mapbox.GetMapImage(locationData.Latitude, locationData.Longitude);
-            Stream stream = new MemoryStream(image);
-
-            var embed = new EmbedBuilder
+            try
             {
-                ImageUrl = "attachment://image.png"
-            };
-            embed.AddField(locationData.Address, report.Current);
-            embed.AddField("Najbliższe dni", report.Daily);
+                var locationData = await _mapbox.GetLocationData(location);
+                var report = await _weather.GenerateWeatherReport(locationData.Latitude, locationData.Longitude);
 
-            await Context.Channel.SendFileAsync(stream, "image.png", embed: embed.Build());
+                var image = await _mapbox.GetMapImage(locationData.Latitude, locationData.Longitude);
+                Stream stream = new MemoryStream(image);
+
+                var embed = new EmbedBuilder
+                {
+                    ImageUrl = "attachment://image.png"
+                };
+                embed.AddField(locationData.Address, report.Current);
+                embed.AddField("Najbliższe dni", report.Daily);
+
+                await Context.Channel.SendFileAsync(stream, "image.png", embed: embed.Build());
+            }
+            catch (ArgumentException ex)
+            {
+                await ReplyAsync(ex.Message);
+            }
         }
 
     }
