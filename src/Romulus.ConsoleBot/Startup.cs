@@ -7,6 +7,7 @@ using Romulus.ConsoleBot.Services;
 using Serilog;
 using System.IO;
 using System.Threading.Tasks;
+using Romulus.ConsoleBot.Database;
 
 namespace Romulus.ConsoleBot
 {
@@ -58,6 +59,8 @@ namespace Romulus.ConsoleBot
             .AddSingleton<StartupService>()
             .AddSingleton<LoggingService>()
             .AddSingleton(Configuration)
+            .AddSingleton<IMongo, Mongo>()
+            .AddScoped<IBirthdayService, BirthdayService>()
             .AddLogging(configure => configure.AddSerilog());
         }
     }
