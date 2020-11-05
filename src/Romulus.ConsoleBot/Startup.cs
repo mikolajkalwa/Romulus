@@ -9,6 +9,7 @@ using Romulus.ConsoleBot.Services;
 using Serilog;
 using System.IO;
 using System.Threading.Tasks;
+using Romulus.ConsoleBot.Database;
 using Romulus.ConsoleBot.APIClients;
 
 namespace Romulus.ConsoleBot
@@ -67,10 +68,12 @@ namespace Romulus.ConsoleBot
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<LoggingService>()
+                .AddSingleton<IMongoDbHelper, MongoDbHelper>()
                 .AddScoped<IOpenWeatherMapClient, OpenWeatherMapClient>()
                 .AddScoped<IMapboxClient, MapboxClient>()
                 .AddScoped<IMapboxService, MapboxService>()
-                .AddScoped<IWeatherService, WeatherService>();
+                .AddScoped<IWeatherService, WeatherService>()
+                .AddScoped<IBirthdayService, BirthdayService>();
 
         }
     }
