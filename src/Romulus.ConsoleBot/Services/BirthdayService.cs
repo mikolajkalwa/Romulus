@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using Romulus.ConsoleBot.Database;
 using System;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Romulus.ConsoleBot.Models;
@@ -9,10 +10,10 @@ namespace Romulus.ConsoleBot.Services
 {
     public class BirthdayService : IBirthdayService
     {
-        private readonly IMongo _database;
+        private readonly IMongoDbHelper _database;
         private static readonly Regex BirthdayRegex = new Regex("^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])$", RegexOptions.Compiled);
 
-        public BirthdayService(IMongo database)
+        public BirthdayService(IMongoDbHelper database)
         {
             _database = database;
         }
@@ -23,9 +24,11 @@ namespace Romulus.ConsoleBot.Services
                 throw new ArgumentException("Podano  datę w nieprawidłowym formacie.", birthdayDate);
             }
 
-            if (await _database.Users.Find(x => x.UserId == userId).AnyAsync())
+            var userQuery = _database.Users.Find(x => x.UserId == userId).ToEnumerable().ToList();
+
+            if (userQuery.Any())
             {
-                var user = await _database.Users.Find(x => x.UserId == userId).FirstAsync();
+                var user = userQuery.First();
 
                 // don't allow users to modify birthday date if they set it in the past
                 if (user.Birthday != null)

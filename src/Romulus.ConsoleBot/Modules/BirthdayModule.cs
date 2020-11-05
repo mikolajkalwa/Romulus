@@ -19,7 +19,6 @@ namespace Romulus.ConsoleBot.Modules
 
         [Command("urodziny")]
         [Summary("Ustawia dzień urodzin. W dniu urodzin użytkownik dostaje specjalną rangę - solenizant. Data jest w formacie DD-MM. Na przykład: 11-01 oznacza 11 stycznia. Datę urodzin można ustawić tylko raz, nie można jej później zmienić!")]
-
         public async Task SetBirthday(string date)
         {
             try

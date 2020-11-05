@@ -3,7 +3,7 @@ using Romulus.ConsoleBot.Models;
 
 namespace Romulus.ConsoleBot.Database
 {
-    public interface IMongo
+    public interface IMongoDbHelper
     {
         IMongoCollection<User> Users { get; set; }
     }

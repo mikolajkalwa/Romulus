@@ -4,11 +4,11 @@ using Romulus.ConsoleBot.Models;
 
 namespace Romulus.ConsoleBot.Database
 {
-    public class Mongo : IMongo
+    public class MongoDbHelper : IMongoDbHelper
     {
         public IMongoCollection<User> Users { get; set; }
 
-        public Mongo(IConfiguration config)
+        public MongoDbHelper(IConfiguration config)
         {
             IMongoClient client = new MongoClient(config["MongoDB:ConnectionString"]);
             var db = client.GetDatabase(config["MongoDB:Database"]);

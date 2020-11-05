@@ -68,7 +68,7 @@ namespace Romulus.ConsoleBot
                 .AddSingleton<CommandHandler>()
                 .AddSingleton<StartupService>()
                 .AddSingleton<LoggingService>()
-                .AddSingleton<IMongo, Mongo>()
+                .AddSingleton<IMongoDbHelper, MongoDbHelper>()
                 .AddScoped<IOpenWeatherMapClient, OpenWeatherMapClient>()
                 .AddScoped<IMapboxClient, MapboxClient>()
                 .AddScoped<IMapboxService, MapboxService>()
