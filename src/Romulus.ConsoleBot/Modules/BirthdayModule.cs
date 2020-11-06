@@ -23,7 +23,7 @@ namespace Romulus.ConsoleBot.Modules
         {
             try
             {
-                await _birthdayService.SetBirthday(Context.Client.CurrentUser.Id, date);
+                await _birthdayService.SetBirthday(Context.Message.Author.Id, date);
                 await ReplyAsync("Prawidłowo ustawiono datę urodzin!");
             }
             catch (ArgumentException ex)
