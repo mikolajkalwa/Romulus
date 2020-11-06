@@ -1,21 +1,21 @@
-﻿using System;
-using System.Globalization;
-using AutoMapper;
+﻿using AutoMapper;
 using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Romulus.ConsoleBot.Services;
-using Serilog;
-using System.IO;
-using System.Threading.Tasks;
-using Microsoft.Extensions.DependencyInjection.Extensions;
 using Quartz;
 using Quartz.Impl;
-using Romulus.ConsoleBot.Database;
 using Romulus.ConsoleBot.APIClients;
+using Romulus.ConsoleBot.Database;
 using Romulus.ConsoleBot.QuartzJobs;
+using Romulus.ConsoleBot.Services;
+using Serilog;
+using System;
+using System.Globalization;
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 
 namespace Romulus.ConsoleBot
 {
@@ -51,26 +51,32 @@ namespace Romulus.ConsoleBot
             provider.GetRequiredService<CommandHandler>();
             await provider.GetRequiredService<StartupService>().StartAsync();
 
+            await StartJobs(provider);
+
+            await Task.Delay(-1);
+        }
+
+        private async Task StartJobs(IServiceProvider provider)
+        {
+            ILoggerFactory loggerFactory = provider.GetRequiredService<ILoggerFactory>();
+            Quartz.Logging.LogContext.SetCurrentLogProvider(loggerFactory);
+
             var factory = new StdSchedulerFactory();
             var jobFactory = new JobFactory(provider);
             IScheduler scheduler = await factory.GetScheduler();
             scheduler.JobFactory = jobFactory;
 
             IJobDetail job = JobBuilder.Create<BirthdayJob>()
-                .WithIdentity("myJob", "group1")
+                .WithIdentity("BirthdayJob")
                 .Build();
 
             ITrigger trigger = TriggerBuilder.Create()
-                .WithIdentity("myTrigger", "group1")
-                .StartNow()
-                .WithSimpleSchedule(x => x
-                    .WithIntervalInSeconds(40)
-                    .RepeatForever())
+                .WithIdentity("Daily 8AM trigger")
+                .WithSchedule(CronScheduleBuilder.DailyAtHourAndMinute(8, 0))
                 .Build();
 
             await scheduler.ScheduleJob(job, trigger);
             await scheduler.Start();
-            await Task.Delay(-1);
         }
 
         private void ConfigureServices(IServiceCollection services)
@@ -82,7 +88,8 @@ namespace Romulus.ConsoleBot
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {
                     LogLevel = LogSeverity.Verbose,
-                    MessageCacheSize = 1000
+                    MessageCacheSize = 1000,
+                    AlwaysDownloadUsers = true
                 }))
                 .AddSingleton(new CommandService(new CommandServiceConfig
                 {
@@ -99,25 +106,6 @@ namespace Romulus.ConsoleBot
                 .AddScoped<IWeatherService, WeatherService>()
                 .AddScoped<IBirthdayService, BirthdayService>()
                 .AddTransient<BirthdayJob>();
-            //.AddQuartz(q =>
-            //{
-            //    var jobKey = new JobKey("notificationJob");
-            //    q.SchedulerId = "JobScheduler";
-            //    q.SchedulerName = "Job Scheduler";
-            //    q.UseMicrosoftDependencyInjectionScopedJobFactory();
-            //    q.AddJob<BirthdayJob>(j => j.WithIdentity(jobKey));
-            //    q.AddTrigger(t => t
-            //        .WithIdentity("notificationJobTrigger")
-            //        .ForJob(jobKey)
-            //        .StartNow()
-            //        .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(10)).RepeatForever())
-            //    );
-            //})
-            //.AddQuartzHostedService(options =>
-            //{
-            //    options.WaitForJobsToComplete = true;
-
-            //});
 
         }
     }
