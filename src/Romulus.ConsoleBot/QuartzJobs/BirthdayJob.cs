@@ -1,4 +1,4 @@
-﻿using Discord;
+﻿using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Quartz;
@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Discord.WebSocket;
 
 namespace Romulus.ConsoleBot.QuartzJobs
 {
@@ -27,47 +26,40 @@ namespace Romulus.ConsoleBot.QuartzJobs
             _birthdayRoleId = Convert.ToUInt64(_configuration["Discord:BirthdayRole"]);
         }
 
-        //public async Task Execute(IJobExecutionContext context)
-        //{
-        //    var guild = await _client.GetGuildAsync(Convert.ToUInt64(_configuration["Discord:MainGuild"]));
-        //    var allUsers = await guild.GetUsersAsync();
-        //    var birthdayRole = guild.GetRole(_birthdayRoleId);
-        //    var currentDay = DateTime.Now.ToString("dd-MM");
-
-        //    foreach (var user in allUsers)
-        //    {
-        //        if (user.RoleIds.Contains(_birthdayRoleId))
-        //        {
-        //            await user.RemoveRoleAsync(birthdayRole);
-        //        }
-        //    }
-
-        //    var birthdayUsers = _bitBirthdayService.GetBirthdayUsers(currentDay);
-        //    var wishes = new StringBuilder().Append(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
-
-        //    foreach (var user in birthdayUsers)
-        //    {
-        //        var discordUser = allUsers.FirstOrDefault(guildUser => guildUser.Id == user.UserId);
-        //        if (discordUser == null)
-        //        {
-        //            _logger.LogError($"User was not found in guild! UserId: {user.UserId}", user);
-        //        }
-        //        else
-        //        {
-        //            wishes.Append("<@").Append(discordUser.Id).Append("> ");
-        //            await discordUser.AddRoleAsync(birthdayRole);
-        //        }
-        //    }
-
-        //    var complimentsChannel =
-        //        await guild.GetTextChannelAsync(Convert.ToUInt64(_configuration["Discord:ComplimentsChannel"]));
-
-        //    await complimentsChannel.SendMessageAsync(wishes.ToString());
-        //}
-        public Task Execute(IJobExecutionContext context)
+        public async Task Execute(IJobExecutionContext context)
         {
-            _logger.LogInformation("No elo");
-            return Task.CompletedTask;
+            var guild = _client.GetGuild(Convert.ToUInt64(_configuration["Discord:MainGuild"]));
+            var birthdayRole = guild.GetRole(_birthdayRoleId);
+            var currentDay = DateTime.Now.ToString("dd-MM");
+
+            foreach (var user in guild.Users)
+            {
+                if (user.Roles.Contains(birthdayRole))
+                {
+                    await user.RemoveRoleAsync(birthdayRole);
+                }
+            }
+
+            var birthdayUsers = _bitBirthdayService.GetBirthdayUsers(currentDay);
+            var wishes = new StringBuilder().Append(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
+
+            foreach (var user in birthdayUsers)
+            {
+                var discordUser = guild.Users.FirstOrDefault(guildUser => guildUser.Id == user.UserId);
+                if (discordUser == null)
+                {
+                    _logger.LogError($"User was not found in guild! UserId: {user.UserId}", user);
+                }
+                else
+                {
+                    wishes.Append("<@").Append(discordUser.Id).Append("> ");
+                    await discordUser.AddRoleAsync(birthdayRole);
+                }
+            }
+
+            var complimentsChannel = guild.GetTextChannel(Convert.ToUInt64(_configuration["Discord:ComplimentsChannel"]));
+
+            await complimentsChannel.SendMessageAsync(wishes.ToString());
         }
     }
 }
