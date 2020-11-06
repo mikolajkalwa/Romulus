@@ -1,4 +1,5 @@
-﻿using System.Globalization;
+﻿using System;
+using System.Globalization;
 using AutoMapper;
 using Discord;
 using Discord.Commands;
@@ -9,8 +10,12 @@ using Romulus.ConsoleBot.Services;
 using Serilog;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using Quartz;
+using Quartz.Impl;
 using Romulus.ConsoleBot.Database;
 using Romulus.ConsoleBot.APIClients;
+using Romulus.ConsoleBot.QuartzJobs;
 
 namespace Romulus.ConsoleBot
 {
@@ -44,8 +49,27 @@ namespace Romulus.ConsoleBot
             var provider = services.BuildServiceProvider();
             provider.GetRequiredService<LoggingService>();
             provider.GetRequiredService<CommandHandler>();
-
             await provider.GetRequiredService<StartupService>().StartAsync();
+
+            var factory = new StdSchedulerFactory();
+            var jobFactory = new JobFactory(provider);
+            IScheduler scheduler = await factory.GetScheduler();
+            scheduler.JobFactory = jobFactory;
+
+            IJobDetail job = JobBuilder.Create<BirthdayJob>()
+                .WithIdentity("myJob", "group1")
+                .Build();
+
+            ITrigger trigger = TriggerBuilder.Create()
+                .WithIdentity("myTrigger", "group1")
+                .StartNow()
+                .WithSimpleSchedule(x => x
+                    .WithIntervalInSeconds(40)
+                    .RepeatForever())
+                .Build();
+
+            await scheduler.ScheduleJob(job, trigger);
+            await scheduler.Start();
             await Task.Delay(-1);
         }
 
@@ -73,7 +97,27 @@ namespace Romulus.ConsoleBot
                 .AddScoped<IMapboxClient, MapboxClient>()
                 .AddScoped<IMapboxService, MapboxService>()
                 .AddScoped<IWeatherService, WeatherService>()
-                .AddScoped<IBirthdayService, BirthdayService>();
+                .AddScoped<IBirthdayService, BirthdayService>()
+                .AddTransient<BirthdayJob>();
+            //.AddQuartz(q =>
+            //{
+            //    var jobKey = new JobKey("notificationJob");
+            //    q.SchedulerId = "JobScheduler";
+            //    q.SchedulerName = "Job Scheduler";
+            //    q.UseMicrosoftDependencyInjectionScopedJobFactory();
+            //    q.AddJob<BirthdayJob>(j => j.WithIdentity(jobKey));
+            //    q.AddTrigger(t => t
+            //        .WithIdentity("notificationJobTrigger")
+            //        .ForJob(jobKey)
+            //        .StartNow()
+            //        .WithSimpleSchedule(x => x.WithInterval(TimeSpan.FromSeconds(10)).RepeatForever())
+            //    );
+            //})
+            //.AddQuartzHostedService(options =>
+            //{
+            //    options.WaitForJobsToComplete = true;
+
+            //});
 
         }
     }
