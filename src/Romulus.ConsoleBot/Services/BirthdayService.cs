@@ -1,6 +1,7 @@
 ﻿using MongoDB.Driver;
 using Romulus.ConsoleBot.Database;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -21,7 +22,7 @@ namespace Romulus.ConsoleBot.Services
         {
             if (!BirthdayRegex.IsMatch(birthdayDate))
             {
-                throw new ArgumentException("Podano  datę w nieprawidłowym formacie.", birthdayDate);
+                throw new ArgumentException("Podano datę w nieprawidłowym formacie.", birthdayDate);
             }
 
             var userQuery = _database.Users.Find(x => x.UserId == userId).ToEnumerable().ToList();
@@ -49,6 +50,11 @@ namespace Romulus.ConsoleBot.Services
 
                 await _database.Users.InsertOneAsync(user);
             }
+        }
+
+        public IEnumerable<User> GetBirthdayUsers(string birthdayDate)
+        {
+            return _database.Users.Find(x => x.Birthday == birthdayDate).ToEnumerable();
         }
     }
 }
