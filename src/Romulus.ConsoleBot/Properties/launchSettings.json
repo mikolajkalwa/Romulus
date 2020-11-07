@@ -1,0 +1,10 @@
+{
+  "profiles": {
+    "Romulus.ConsoleBot": {
+      "commandName": "Project"
+    },
+    "Docker": {
+      "commandName": "Docker"
+    }
+  }
+}
