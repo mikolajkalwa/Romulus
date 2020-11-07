@@ -36,11 +36,17 @@ namespace Romulus.ConsoleBot.QuartzJobs
             {
                 if (user.Roles.Contains(birthdayRole))
                 {
-                    await user.RemoveRoleAsync(birthdayRole);
+                    user.RemoveRoleAsync(birthdayRole);
                 }
             }
 
-            var birthdayUsers = _bitBirthdayService.GetBirthdayUsers(currentDay);
+            var birthdayUsers = _bitBirthdayService.GetBirthdayUsers(currentDay).ToList();
+
+            if (!birthdayUsers.Any())
+            {
+                return;
+            }
+
             var wishes = new StringBuilder().Append(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
 
             foreach (var user in birthdayUsers)
@@ -53,7 +59,7 @@ namespace Romulus.ConsoleBot.QuartzJobs
                 else
                 {
                     wishes.Append("<@").Append(discordUser.Id).Append("> ");
-                    await discordUser.AddRoleAsync(birthdayRole);
+                    discordUser.AddRoleAsync(birthdayRole);
                 }
             }
 
