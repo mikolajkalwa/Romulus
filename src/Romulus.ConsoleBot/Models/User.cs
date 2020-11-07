@@ -3,6 +3,7 @@ using MongoDB.Bson.Serialization.Attributes;
 
 namespace Romulus.ConsoleBot.Models
 {
+    [BsonIgnoreExtraElements]
     public class User
     {
         [BsonId]
