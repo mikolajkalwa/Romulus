@@ -1,8 +1,8 @@
-﻿using System;
-using System.Collections.Concurrent;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using Quartz.Spi;
+using System;
+using System.Collections.Concurrent;
 
 namespace Romulus.ConsoleBot
 {

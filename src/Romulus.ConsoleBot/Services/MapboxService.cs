@@ -1,7 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
 using Romulus.ConsoleBot.APIClients;
 using Romulus.ConsoleBot.Models;
+using System;
 using System.Threading.Tasks;
 
 namespace Romulus.ConsoleBot.Services
@@ -30,7 +30,7 @@ namespace Romulus.ConsoleBot.Services
 
         public async Task<byte[]> GetMapImage(float lat, float lon)
         {
-            return await _client.GetMapImage(lat, lon); 
+            return await _client.GetMapImage(lat, lon);
         }
 
     }

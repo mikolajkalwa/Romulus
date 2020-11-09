@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Romulus.ConsoleBot.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
-using Romulus.ConsoleBot.Models;
 
 namespace Romulus.ConsoleBot.Services
 {

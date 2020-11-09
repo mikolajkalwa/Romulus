@@ -1,10 +1,10 @@
-﻿using System;
-using Discord;
+﻿using Discord;
+using Discord.Addons.Preconditions;
 using Discord.Commands;
 using Romulus.ConsoleBot.Services;
+using System;
 using System.IO;
 using System.Threading.Tasks;
-using Discord.Addons.Preconditions;
 
 namespace Romulus.ConsoleBot.Modules
 {
