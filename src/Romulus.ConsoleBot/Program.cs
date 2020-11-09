@@ -1,9 +1,7 @@
-﻿using System.Globalization;
-using System.IO;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Serilog;
-using Serilog.Events;
+using System.Globalization;
+using System.IO;
 
 namespace Romulus.ConsoleBot
 {

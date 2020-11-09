@@ -1,8 +1,7 @@
 ﻿using Microsoft.Extensions.Configuration;
 using RestSharp;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
 using RestSharp.Serializers.NewtonsoftJson;
+using System.Threading.Tasks;
 
 namespace Romulus.ConsoleBot.APIClients
 {

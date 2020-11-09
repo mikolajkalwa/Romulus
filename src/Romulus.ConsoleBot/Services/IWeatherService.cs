@@ -1,5 +1,5 @@
-﻿using System.Threading.Tasks;
-using Romulus.ConsoleBot.Models;
+﻿using Romulus.ConsoleBot.Models;
+using System.Threading.Tasks;
 
 namespace Romulus.ConsoleBot.Services
 {

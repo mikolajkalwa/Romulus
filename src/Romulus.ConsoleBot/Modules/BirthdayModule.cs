@@ -1,8 +1,8 @@
-﻿using System;
-using System.Threading.Tasks;
-using Discord.Commands;
+﻿using Discord.Commands;
 using Microsoft.Extensions.Logging;
 using Romulus.ConsoleBot.Services;
+using System;
+using System.Threading.Tasks;
 
 namespace Romulus.ConsoleBot.Modules
 {
