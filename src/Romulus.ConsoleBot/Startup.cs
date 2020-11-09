@@ -4,6 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Quartz;
 using Quartz.Impl;
 using Romulus.ConsoleBot.APIClients;
@@ -12,33 +13,22 @@ using Romulus.ConsoleBot.QuartzJobs;
 using Romulus.ConsoleBot.Services;
 using Serilog;
 using System;
-using System.Globalization;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Logging;
 
 namespace Romulus.ConsoleBot
 {
     public class Startup
     {
-        public IConfiguration Configuration { get; }
+        private readonly IConfiguration _configuration;
 
-        public Startup(string[] args)
+        public Startup(IConfiguration configuration)
         {
-            var cultureInfo = new CultureInfo("en-US");
-            CultureInfo.DefaultThreadCurrentCulture = cultureInfo;
-            CultureInfo.DefaultThreadCurrentUICulture = cultureInfo;
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddUserSecrets<Program>()
-                .AddEnvironmentVariables();
-            Configuration = builder.Build();
+            _configuration = configuration;
         }
 
-        public static async Task RunAsync(string[] args)
+        public static async Task RunAsync(IConfiguration configuration)
         {
-            var startup = new Startup(args);
+            var startup = new Startup(configuration);
             await startup.RunAsync();
         }
 
@@ -85,7 +75,7 @@ namespace Romulus.ConsoleBot
             services
                 .AddLogging(configure => configure.AddSerilog())
                 .AddAutoMapper(c => c.AddProfile<AutoMapping>(), typeof(Profile))
-                .AddSingleton(Configuration)
+                .AddSingleton(_configuration)
                 .AddSingleton(new DiscordSocketClient(new DiscordSocketConfig
                 {
                     LogLevel = LogSeverity.Verbose,
