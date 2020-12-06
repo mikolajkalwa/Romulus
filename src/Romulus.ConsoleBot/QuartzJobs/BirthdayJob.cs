@@ -56,6 +56,7 @@ namespace Romulus.ConsoleBot.QuartzJobs
                 var discordUser = guild.GetUser(user.UserId);
                 if (discordUser == null)
                 {
+                    _logger.LogError($"User was not found in guild! UserId: {user.UserId}", user);
                     await _birthdayService.ClearBirthday(user.UserId);
                 }
                 else
