@@ -14,14 +14,14 @@ namespace Romulus.ConsoleBot.QuartzJobs
     {
         private readonly DiscordSocketClient _client;
         private readonly IConfiguration _configuration;
-        private readonly IBirthdayService _bitBirthdayService;
+        private readonly IBirthdayService _birthdayService;
         private readonly ILogger<BirthdayJob> _logger;
         private readonly ulong _birthdayRoleId;
-        public BirthdayJob(DiscordSocketClient client, IConfiguration configuration, IBirthdayService bitBirthdayService, ILogger<BirthdayJob> logger)
+        public BirthdayJob(DiscordSocketClient client, IConfiguration configuration, IBirthdayService birthdayService, ILogger<BirthdayJob> logger)
         {
             _client = client;
             _configuration = configuration;
-            _bitBirthdayService = bitBirthdayService;
+            _birthdayService = birthdayService;
             _logger = logger;
             _birthdayRoleId = Convert.ToUInt64(_configuration["Discord:BirthdayRole"]);
         }
@@ -40,21 +40,23 @@ namespace Romulus.ConsoleBot.QuartzJobs
                 }
             }
 
-            var birthdayUsers = _bitBirthdayService.GetBirthdayUsers(currentDay).ToList();
+            var birthdayUsers = _birthdayService.GetBirthdayUsers(currentDay).ToList();
 
             if (!birthdayUsers.Any())
             {
                 return;
             }
 
-            var wishes = new StringBuilder().Append(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
+            var wishes = new StringBuilder(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
+            var initialLength = wishes.Length;
 
             foreach (var user in birthdayUsers)
             {
-                var discordUser = guild.Users.FirstOrDefault(guildUser => guildUser.Id == user.UserId);
+                await guild.DownloadUsersAsync();
+                var discordUser = guild.GetUser(user.UserId);
                 if (discordUser == null)
                 {
-                    _logger.LogError($"User was not found in guild! UserId: {user.UserId}", user);
+                    await _birthdayService.ClearBirthday(user.UserId);
                 }
                 else
                 {
@@ -63,9 +65,11 @@ namespace Romulus.ConsoleBot.QuartzJobs
                 }
             }
 
-            var complimentsChannel = guild.GetTextChannel(Convert.ToUInt64(_configuration["Discord:ComplimentsChannel"]));
-
-            await complimentsChannel.SendMessageAsync(wishes.ToString());
+            if (wishes.Length > initialLength)
+            {
+                var complimentsChannel = guild.GetTextChannel(Convert.ToUInt64(_configuration["Discord:ComplimentsChannel"]));
+                await complimentsChannel.SendMessageAsync(wishes.ToString());
+            }
         }
     }
 }

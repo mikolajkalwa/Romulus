@@ -8,5 +8,7 @@ namespace Romulus.ConsoleBot.Services
     {
         Task SetBirthday(ulong userId, string birthdayDate);
         IEnumerable<User> GetBirthdayUsers(string birthdayDate);
+
+        Task ClearBirthday(ulong userId);
     }
 }

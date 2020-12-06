@@ -52,6 +52,11 @@ namespace Romulus.ConsoleBot.Services
             }
         }
 
+        public async Task ClearBirthday(ulong userId)
+        {
+            var update = Builders<User>.Update.Set(x => x.Birthday, null);
+            await _database.Users.UpdateOneAsync(x => x.UserId == userId, update);
+        }
         public IEnumerable<User> GetBirthdayUsers(string birthdayDate)
         {
             return _database.Users.Find(x => x.Birthday == birthdayDate).ToEnumerable();
