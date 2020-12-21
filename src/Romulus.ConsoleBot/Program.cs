@@ -20,7 +20,7 @@ namespace Romulus.ConsoleBot
             Log.Logger = new LoggerConfiguration()
                 .ReadFrom.Configuration(configuration)
                 .Enrich.FromLogContext()
-                .WriteTo.Console()
+                .WriteTo.Console(outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss.fff}] [{Level}] {Message}{NewLine}{Exception}")
                 .CreateLogger();
 
             Startup.RunAsync(configuration).GetAwaiter().GetResult();
