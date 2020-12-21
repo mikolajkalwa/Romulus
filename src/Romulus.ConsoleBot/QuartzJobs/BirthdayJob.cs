@@ -28,7 +28,10 @@ namespace Romulus.ConsoleBot.QuartzJobs
 
         public async Task Execute(IJobExecutionContext context)
         {
+            _logger.LogInformation("Executing birthday job...");
             var guild = _client.GetGuild(Convert.ToUInt64(_configuration["Discord:MainGuild"]));
+            await guild.DownloadUsersAsync();
+            _logger.LogDebug("Fetched all guild members...");
             var birthdayRole = guild.GetRole(_birthdayRoleId);
             var currentDay = DateTime.Now.ToString("dd-MM");
 
@@ -36,6 +39,7 @@ namespace Romulus.ConsoleBot.QuartzJobs
             {
                 if (user.Roles.Contains(birthdayRole))
                 {
+                    _logger.LogDebug($"Removing birthday role from {user.Username}");
                     user.RemoveRoleAsync(birthdayRole);
                 }
             }
@@ -46,13 +50,14 @@ namespace Romulus.ConsoleBot.QuartzJobs
             {
                 return;
             }
+            _logger.LogDebug($"{birthdayUsers.Count} users have birthday today.");
 
             var wishes = new StringBuilder(":partying_face:  Wszystkiego najlepszego z okazji urodzin! ");
             var initialLength = wishes.Length;
 
             foreach (var user in birthdayUsers)
             {
-                await guild.DownloadUsersAsync();
+                _logger.LogDebug($"Setting user object for {user.UserId}");
                 var discordUser = guild.GetUser(user.UserId);
                 if (discordUser == null)
                 {
@@ -61,6 +66,7 @@ namespace Romulus.ConsoleBot.QuartzJobs
                 }
                 else
                 {
+                    _logger.LogDebug($"Setting birthday role for {discordUser.Username}");
                     wishes.Append("<@").Append(discordUser.Id).Append("> ");
                     discordUser.AddRoleAsync(birthdayRole);
                 }
@@ -68,6 +74,7 @@ namespace Romulus.ConsoleBot.QuartzJobs
 
             if (wishes.Length > initialLength)
             {
+                _logger.LogDebug($"Sending message to a compliments channel");
                 var complimentsChannel = guild.GetTextChannel(Convert.ToUInt64(_configuration["Discord:ComplimentsChannel"]));
                 await complimentsChannel.SendMessageAsync(wishes.ToString());
             }
